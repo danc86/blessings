@@ -448,7 +448,7 @@ class NullCallableString(unicode):
         new = unicode.__new__(cls, u'')
         return new
 
-    def __call__(self, arg):
+    def __call__(self, arg, *extra_args):
         if isinstance(arg, int):
             return u''
         return arg  # TODO: Force even strs in Python 2.x to be unicodes? Nah. How would I know what encoding to use to convert it?

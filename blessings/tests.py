@@ -44,6 +44,8 @@ def test_capability():
 
     """
     t = TestTerminal()
+    if not t.is_a_tty:
+        raise SkipTest
     sc = unicode_cap('sc')
     eq_(t.save, sc)
     eq_(t.save, sc)  # Make sure caching doesn't screw it up.
@@ -64,7 +66,7 @@ def test_capability_with_forced_tty():
 
 def test_parametrization():
     """Test parametrizing a capability."""
-    eq_(TestTerminal().cup(3, 4), unicode_parm('cup', 3, 4))
+    eq_(TestTerminal(force_styling=True).cup(3, 4), unicode_parm('cup', 3, 4))
 
 
 def height_and_width():
@@ -143,7 +145,7 @@ def test_mnemonic_colors():
 
     # Avoid testing red, blue, yellow, and cyan, since they might someday
     # change depending on terminal type.
-    t = TestTerminal()
+    t = TestTerminal(force_styling=True)
     eq_(t.white, color(7))
     eq_(t.green, color(2))  # Make sure it's different than white.
     eq_(t.on_black, on_color(0))
@@ -247,7 +249,7 @@ def test_nice_formatting_errors():
 def test_init_descriptor_always_initted():
     """We should be able to get a height and width even on no-tty Terminals."""
     t = Terminal(stream=StringIO())
-    eq_(type(t.height), int)
+    assert isinstance(t.height, int) or t.height is None
 
 
 def test_force_styling_none():
